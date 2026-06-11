@@ -20,7 +20,6 @@ internal static class CertificateInstaller
         if (IsInstalledInLocalMachineRoot(certificate))
         {
             log("Trusted root certificate already installed.");
-            LogCertificateValidation(certificate, log);
             return;
         }
 
@@ -32,7 +31,6 @@ internal static class CertificateInstaller
         }
 
         log("Installed trusted root certificate.");
-        LogCertificateValidation(certificate, log);
     }
 
     private static bool IsInstalledInLocalMachineRoot(X509Certificate2 certificate)
@@ -87,47 +85,5 @@ internal static class CertificateInstaller
         {
             log("certutil: " + line);
         }
-    }
-
-    private static void LogCertificateValidation(X509Certificate2 certificate, Action<string> log)
-    {
-        var now = DateTime.Now;
-        if (now < certificate.NotBefore || now > certificate.NotAfter)
-        {
-            log($"WARNING: Certificate is outside its validity period ({certificate.NotBefore:g} to {certificate.NotAfter:g}).");
-        }
-
-        if (!IsCertificateAuthority(certificate))
-        {
-            log("WARNING: Certificate is not marked as a certificate authority; root trust may not work as expected.");
-        }
-
-        using var rsa = certificate.GetRSAPublicKey();
-        if (rsa is not null && rsa.KeySize < 2048)
-        {
-            log($"WARNING: Certificate RSA key is {rsa.KeySize} bits; modern Windows/TLS clients may reject it.");
-        }
-
-        using var chain = new X509Chain();
-        chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-        var valid = chain.Build(certificate);
-        if (valid)
-        {
-            log("Certificate validates in the Windows trust chain.");
-            return;
-        }
-
-        var statuses = chain.ChainStatus
-            .Select(status => $"{status.Status}: {status.StatusInformation.Trim()}")
-            .Where(status => !string.IsNullOrWhiteSpace(status))
-            .Distinct();
-        log("WARNING: Certificate is installed, but Windows chain validation failed: " + string.Join("; ", statuses));
-    }
-
-    private static bool IsCertificateAuthority(X509Certificate2 certificate)
-    {
-        return certificate.Extensions
-            .OfType<X509BasicConstraintsExtension>()
-            .Any(extension => extension.CertificateAuthority);
     }
 }
