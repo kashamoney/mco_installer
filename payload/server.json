@@ -1,0 +1,11 @@
+{
+  "serverName": "Motor City Online",
+  "serverIp": "26.226.71.102",
+  "patchServerPort": 80,
+  "shardUrl": "http://26.226.71.102/ShardList/",
+  "tickerUrl": "https://pastebin.com/raw/9h9sduQV",
+  "radminNetworkName": "Motor City Online",
+  "radminNetworkPassword": "123456",
+  "preferredInstallPath": "C:\\Program Files (x86)\\EA Games\\Motor City Online",
+  "gameExecutable": "MCity.exe"
+}

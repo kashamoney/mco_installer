@@ -1,0 +1,13 @@
+bin/
+obj/
+dist/
+*.user
+*.suo
+.vs/
+payload/update/
+payload/update.zip
+payload/*.crt
+payload/*.cer
+payload/*.key
+payload/*radmin*.exe
+payload/*Radmin*.exe
