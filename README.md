@@ -25,8 +25,6 @@ Put redistributable server assets in `payload/` before publishing:
 | `pub.key` | Recommended | Copied to the game folder as `pub.key`. |
 | `radmin-vpn.exe` | Optional | Radmin VPN installer, installed silently if selected. |
 
-`pubori.key` is also accepted and will be copied as `pub.key`.
-
 If `update.zip` contains a top-level `update/` folder, the installer unwraps that folder and copies its contents directly into the Motor City Online install folder. For example, `update.zip\update\MCity.exe` becomes `...\Motor City Online\MCity.exe`.
 
 ## Build
