@@ -64,4 +64,4 @@ The installer writes to the 32-bit registry view under:
 HKLM\SOFTWARE\Electronic Arts\Motor City
 ```
 
-It sets the server IP, patch server port, auth login server, shard URL, and ticker URL. It also clears the `Path` value in the `GamePatch`, `UpdateInfoPatch`, and `NPSPatch` keys so the original patcher path is skipped.
+It sets the server IP, patch server port, account creation URL, auth login server, shard URLs, and ticker URL. It also clears the `Path` value in the `GamePatch`, `UpdateInfoPatch`, and `NPSPatch` keys so the original patcher path is skipped.

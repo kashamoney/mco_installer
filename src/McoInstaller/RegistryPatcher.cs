@@ -32,11 +32,14 @@ internal static class RegistryPatcher
 
         SetStringWhereFound(root, "PatchServerIP", settings.ServerIp);
         SetStringWhereFound(root, "PatchServerPort", PortString(settings));
+        SetStringWhereFound(root, "CreateAccount", CreateAccountUrl(settings));
         SetStringWhereFound(root, "AuthLoginServer", settings.ServerIp);
         SetStringWhereFound(root, "ShardUrl", settings.ShardUrl);
+        SetStringWhereFoundRecursive(root, "ShardUrlDev", ShardUrlDev(settings));
 
         root.SetValue("PatchServerIP", settings.ServerIp, RegistryValueKind.String);
         root.SetValue("PatchServerPort", PortString(settings), RegistryValueKind.String);
+        root.SetValue("CreateAccount", CreateAccountUrl(settings), RegistryValueKind.String);
         WriteRootPatchSkipValues(root);
         WriteAuthAuthKey(root, settings);
 
@@ -74,6 +77,20 @@ internal static class RegistryPatcher
         return settings.PatchServerPort.ToString(CultureInfo.InvariantCulture);
     }
 
+    private static string CreateAccountUrl(ServerSettings settings)
+    {
+        return string.IsNullOrWhiteSpace(settings.CreateAccountUrl)
+            ? $"{settings.ServerIp}/SubscribeEntry.jsp?prodID=REG-MCO"
+            : settings.CreateAccountUrl;
+    }
+
+    private static string ShardUrlDev(ServerSettings settings)
+    {
+        return string.IsNullOrWhiteSpace(settings.ShardUrlDev)
+            ? settings.ShardUrl
+            : settings.ShardUrlDev;
+    }
+
     private static void WriteVersionKey(RegistryKey versionKey, ServerSettings settings, string installPath)
     {
         WriteInstallPathValues(versionKey, installPath);
@@ -81,6 +98,7 @@ internal static class RegistryPatcher
         versionKey.SetValue("Language", 0, RegistryValueKind.DWord);
         versionKey.SetValue("SrcDrive", Path.GetPathRoot(installPath) ?? string.Empty, RegistryValueKind.String);
         versionKey.SetValue("ShardUrl", settings.ShardUrl, RegistryValueKind.String);
+        versionKey.SetValue("ShardUrlDev", ShardUrlDev(settings), RegistryValueKind.String);
         versionKey.SetValue("TickerUrl", settings.TickerUrl, RegistryValueKind.String);
     }
 
