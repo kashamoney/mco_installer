@@ -8,6 +8,16 @@
     <ApplicationIcon>..\..\mcity.ico</ApplicationIcon>
     <AssemblyName>McoInstaller</AssemblyName>
     <RootNamespace>McoInstaller</RootNamespace>
+    <AssemblyTitle>Motor City Online Setup</AssemblyTitle>
+    <Title>Motor City Online Setup</Title>
+    <Description>Motor City Online setup for the custom server</Description>
+    <Product>Motor City Online Custom Server Installer</Product>
+    <VersionPrefix>1.1.0</VersionPrefix>
+    <Version>$(VersionPrefix)</Version>
+    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+    <FileVersion>$(VersionPrefix).0</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>

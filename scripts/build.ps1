@@ -19,6 +19,23 @@ if (-not (Test-Path $project)) {
     throw "Project not found: $project"
 }
 
+[xml]$projectXml = Get-Content -LiteralPath $project
+$projectVersion = $projectXml.Project.PropertyGroup |
+    ForEach-Object { $_.VersionPrefix } |
+    Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+    Select-Object -First 1
+
+if (-not $projectVersion) {
+    $projectVersion = $projectXml.Project.PropertyGroup |
+        ForEach-Object { $_.Version } |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+        Select-Object -First 1
+}
+
+if (-not $projectVersion) {
+    throw "Missing <VersionPrefix> or <Version> in $project"
+}
+
 if (-not (Test-Path (Join-Path $payload "server.json"))) {
     throw "Missing payload\server.json"
 }
@@ -53,10 +70,17 @@ dotnet publish $project `
     /p:EnableCompressionInSingleFile=false `
     /p:IncludeNativeLibrariesForSelfExtract=true
 
+$publishedInstaller = Join-Path $Output "McoInstaller.exe"
+$versionedInstaller = Join-Path $Output ("McoInstaller-v{0}.exe" -f $projectVersion)
+Copy-Item -LiteralPath $publishedInstaller -Destination $versionedInstaller -Force
+
 $userReadme = Join-Path $repoRoot "USER_README.txt"
 if (Test-Path $userReadme) {
-    Copy-Item -LiteralPath $userReadme -Destination (Join-Path $Output "README.txt") -Force
+    $readmeText = Get-Content -LiteralPath $userReadme -Raw
+    $readmeText = $readmeText.Replace("{{INSTALLER_VERSION}}", $projectVersion)
+    Set-Content -LiteralPath (Join-Path $Output "README.txt") -Value $readmeText -NoNewline
 }
 
 Write-Host "Published installer:"
-Write-Host (Join-Path $Output "McoInstaller.exe")
+Write-Host $publishedInstaller
+Write-Host $versionedInstaller

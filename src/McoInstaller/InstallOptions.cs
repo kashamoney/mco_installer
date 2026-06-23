@@ -6,6 +6,5 @@ public sealed class InstallOptions
     public bool ApplyUpdate { get; init; } = true;
     public bool InstallCertificate { get; init; } = true;
     public bool PatchRegistry { get; init; } = true;
-    public bool InstallRadmin { get; init; } = true;
     public bool LaunchGame { get; init; }
 }

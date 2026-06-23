@@ -25,12 +25,10 @@ public sealed class PayloadPackage
     public string? UpdateDirectoryPath { get; private set; }
     public string? CertificatePath { get; private set; }
     public string? PublicKeyPath { get; private set; }
-    public string? RadminInstallerPath { get; private set; }
 
     public bool HasUpdate => File.Exists(UpdateZipPath) || Directory.Exists(UpdateDirectoryPath);
     public bool HasCertificate => File.Exists(CertificatePath);
     public bool HasPublicKey => File.Exists(PublicKeyPath);
-    public bool HasRadminInstaller => File.Exists(RadminInstallerPath);
 
     public static PayloadPackage Load(Action<string>? log = null)
     {
@@ -52,8 +50,7 @@ public sealed class PayloadPackage
         {
             HasUpdate ? "update: found" : "update: missing",
             HasCertificate ? "certificate: found" : "certificate: missing",
-            HasPublicKey ? "pub.key: found" : "pub.key: missing",
-            HasRadminInstaller ? "Radmin VPN: bundled" : "Radmin VPN: not bundled"
+            HasPublicKey ? "pub.key: found" : "pub.key: missing"
         };
 
         return string.Join(" | ", parts);
@@ -67,10 +64,7 @@ public sealed class PayloadPackage
             UpdateZipPath = FindFirstFile(rootDirectory, "update.zip", "mco-update.zip", "sunset-update.zip"),
             UpdateDirectoryPath = FindFirstDirectory(rootDirectory, "update"),
             CertificatePath = FindFirstFile(rootDirectory, "server.crt", "server.cer"),
-            PublicKeyPath = FindFirstFile(rootDirectory, "pub.key", "pubori.key"),
-            RadminInstallerPath = FindFirstMatchingFile(rootDirectory, static name =>
-                name.Contains("radmin", StringComparison.OrdinalIgnoreCase) &&
-                name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+            PublicKeyPath = FindFirstFile(rootDirectory, "pub.key", "pubori.key")
         };
 
         return package;
@@ -200,14 +194,4 @@ public sealed class PayloadPackage
         return null;
     }
 
-    private static string? FindFirstMatchingFile(string rootDirectory, Func<string, bool> predicate)
-    {
-        if (!Directory.Exists(rootDirectory))
-        {
-            return null;
-        }
-
-        return Directory.EnumerateFiles(rootDirectory, "*", SearchOption.TopDirectoryOnly)
-            .FirstOrDefault(path => predicate(Path.GetFileName(path)));
-    }
 }

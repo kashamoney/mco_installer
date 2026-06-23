@@ -1,9 +1,10 @@
 Motor City Online Custom Server Setup
+Installer version: {{INSTALLER_VERSION}}
 
 Before you start
 
 1. Install Motor City Online from your original game ISO first.
-2. After the game is installed, run McoInstaller.exe.
+2. After the game is installed, run the latest McoInstaller-v{{INSTALLER_VERSION}}.exe.
 3. If Windows asks for administrator permission, click Yes.
 
 What to do
@@ -13,13 +14,6 @@ What to do
 3. If it is blank or wrong, click Browse and select the folder that contains MCity.exe.
 4. Click Install.
 5. Wait until it says setup is complete.
-
-Radmin VPN is required to play and should install automatically.
-
-After installed, open Radmin VPN and join this network:
-
-Network: Motor City Online
-Password: 123456
 
 Start the game
 

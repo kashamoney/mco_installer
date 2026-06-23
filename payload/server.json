@@ -6,8 +6,6 @@
   "shardUrl": "http://51.79.84.64/ShardList/",
   "shardUrlDev": "http://51.79.84.64/ShardList/",
   "tickerUrl": "http://rusty-motors.com/Ticker",
-  "radminNetworkName": "Motor City Online",
-  "radminNetworkPassword": "123456",
   "preferredInstallPath": "C:\\Program Files (x86)\\EA Games\\Motor City Online",
   "gameExecutable": "MCity.exe"
 }

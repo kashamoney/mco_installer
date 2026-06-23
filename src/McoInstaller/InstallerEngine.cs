@@ -12,9 +12,10 @@ public sealed class InstallerEngine
         _log = log;
     }
 
-    public async Task RunAsync(InstallOptions options, PayloadPackage payload, CancellationToken cancellationToken)
+    public Task RunAsync(InstallOptions options, PayloadPackage payload, CancellationToken cancellationToken)
     {
         _log("Starting setup...");
+        cancellationToken.ThrowIfCancellationRequested();
         ValidateOptions(options, payload);
 
         var installPath = ResolveInstallPath(options.InstallPath);
@@ -44,19 +45,13 @@ public sealed class InstallerEngine
             RegistryPatcher.Patch(payload.Settings, installPath, _log);
         }
 
-        if (options.InstallRadmin)
-        {
-            await RunRadminInstallerIfPresentAsync(payload, cancellationToken);
-            _log($"Radmin VPN network: {payload.Settings.RadminNetworkName}");
-            _log($"Radmin VPN password: {payload.Settings.RadminNetworkPassword}");
-        }
-
         if (options.LaunchGame)
         {
             LaunchGame(installPath, payload.Settings);
         }
 
         _log("Setup complete.");
+        return Task.CompletedTask;
     }
 
     private static void ValidateOptions(InstallOptions options, PayloadPackage payload)
@@ -196,47 +191,6 @@ public sealed class InstallerEngine
         ClearReadOnly(destination);
         File.Copy(payload.PublicKeyPath!, destination, overwrite: true);
         _log($"Copied {Path.GetFileName(payload.PublicKeyPath)} to pub.key.");
-    }
-
-    private async Task RunRadminInstallerIfPresentAsync(PayloadPackage payload, CancellationToken cancellationToken)
-    {
-        if (!payload.HasRadminInstaller)
-        {
-            _log("No Radmin VPN installer bundled; install Radmin VPN manually if needed.");
-            return;
-        }
-
-        if (InstalledPrograms.IsInstalled("Radmin VPN"))
-        {
-            _log("Radmin VPN already appears to be installed.");
-            return;
-        }
-
-        var logPath = Path.Combine(Path.GetTempPath(), "McoInstaller-RadminVPN-Install.log");
-        _log("Installing Radmin VPN silently...");
-        _log($"Radmin install log: {logPath}");
-
-        var exitCode = await ProcessRunner.RunAsync(
-            payload.RadminInstallerPath!,
-            Path.GetDirectoryName(payload.RadminInstallerPath!),
-            [
-                "/VERYSILENT",
-                "/SUPPRESSMSGBOXES",
-                "/NORESTART",
-                "/SP-",
-                "/LOG=" + logPath
-            ],
-            _log,
-            cancellationToken);
-
-        if (exitCode == 0 || InstalledPrograms.IsInstalled("Radmin VPN"))
-        {
-            _log("Radmin VPN install complete.");
-            return;
-        }
-
-        _log($"Silent Radmin VPN install exited with code {exitCode}; opening the installer normally.");
-        await ProcessRunner.RunInteractiveAsync(payload.RadminInstallerPath!, Path.GetDirectoryName(payload.RadminInstallerPath!), _log, cancellationToken);
     }
 
     private void LaunchGame(string installPath, ServerSettings settings)

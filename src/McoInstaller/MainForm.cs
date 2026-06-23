@@ -21,7 +21,7 @@ public sealed class MainForm : Form
 
     public MainForm()
     {
-        Text = "Motor City Online Setup";
+        Text = $"Motor City Online Setup {AppVersion.Display}";
         Icon = Icon.ExtractAssociatedIcon(Environment.ProcessPath ?? Application.ExecutablePath) ?? Icon;
         ClientSize = new Size(640, 420);
         FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -75,7 +75,7 @@ public sealed class MainForm : Form
 
         var title = new Label
         {
-            Text = "Motor City Online Setup",
+            Text = $"Motor City Online Setup {AppVersion.Display}",
             Font = new Font(Font, FontStyle.Bold),
             AutoSize = true,
             Location = new Point(66, 15)
@@ -259,6 +259,7 @@ public sealed class MainForm : Form
             _payload = PayloadPackage.Load();
             var detectedPath = GameInstallLocator.Locate(_payload.Settings.PreferredInstallPath);
             _installPathBox.Text = detectedPath ?? GameInstallLocator.DefaultInstallPath;
+            AppendLog($"Installer version: {AppVersion.Display}");
             AppendLog(detectedPath is null
                 ? "Game folder was not detected automatically."
                 : $"Detected game folder: {detectedPath}");
@@ -351,7 +352,6 @@ public sealed class MainForm : Form
             ApplyUpdate = true,
             InstallCertificate = true,
             PatchRegistry = true,
-            InstallRadmin = true,
             LaunchGame = _launchGameCheckBox.Checked
         };
 
